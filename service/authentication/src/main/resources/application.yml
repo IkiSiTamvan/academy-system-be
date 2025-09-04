@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: authentication-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: rizky
+    password: secret
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+jwt:
+  secret: your_jwt_secret_key_should_be_long_and_secure_1234567890
+  expiration-ms: 86400000  # 24 hours
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api/auth
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+    com.sitamvan: DEBUG

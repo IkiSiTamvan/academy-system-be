@@ -1,0 +1,12 @@
+**/.DS_Store
+.idea/
+LOG_FILE_IS_UNDEFINED*
+**/*.iml
+**/*.log
+**/*.log.*
+**/application-local*.yml
+**/target/
+infer-out/
+**/.vscode/
+aws/
+awscliv2.zip
