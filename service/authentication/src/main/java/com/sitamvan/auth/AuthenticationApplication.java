@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.sitamvan.auth","com.sitamvan.shared.data"})
 @ConfigurationPropertiesScan("com.sitamvan.auth.config")
 public class AuthenticationApplication {
     public static void main(String[] args) {
