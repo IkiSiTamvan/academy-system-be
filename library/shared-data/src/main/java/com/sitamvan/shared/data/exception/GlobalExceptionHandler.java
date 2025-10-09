@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public BaseResponse<?> handleGeneralException(Exception ex) {
-        return ResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+        return ResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"+ ex.getMessage());
     }
 }
 
