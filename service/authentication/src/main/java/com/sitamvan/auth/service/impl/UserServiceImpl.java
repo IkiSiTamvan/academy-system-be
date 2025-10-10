@@ -1,7 +1,7 @@
 package com.sitamvan.auth.service.impl;
 
-import com.sitamvan.auth.dto.request.CreateUserRequest;
-import com.sitamvan.auth.dto.request.UpdateUserRequest;
+import com.sitamvan.auth.dto.request.RequestUserCreate;
+import com.sitamvan.auth.dto.request.RequestUserUpdate;
 import com.sitamvan.auth.mapper.UserMapper;
 import com.sitamvan.auth.model.User;
 import com.sitamvan.auth.repository.IUserRepository;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements IUserService {
     private final UserMapper userMapper;
 
     @Override
-    public User createUser(CreateUserRequest request) {
+    public User createUser(RequestUserCreate request) {
         try {
 
             User user = userMapper.toEntityFromCreate(request);
@@ -50,7 +50,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User updateUser(UpdateUserRequest request) {
+    public User updateUser(RequestUserUpdate request) {
         try {
             User existingUser = userRepository.findById(request.id())
                     .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + request.id()));

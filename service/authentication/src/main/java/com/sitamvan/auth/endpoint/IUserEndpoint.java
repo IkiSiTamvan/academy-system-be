@@ -1,7 +1,7 @@
 package com.sitamvan.auth.endpoint;
 
-import com.sitamvan.auth.dto.request.CreateUserRequest;
-import com.sitamvan.auth.dto.request.UpdateUserRequest;
+import com.sitamvan.auth.dto.request.RequestUserCreate;
+import com.sitamvan.auth.dto.request.RequestUserUpdate;
 import com.sitamvan.auth.dto.response.ResponseUser;
 import com.sitamvan.auth.dto.statval.ApplicationConstant;
 import com.sitamvan.shared.data.base.BaseResponse;
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 public interface IUserEndpoint {
 
     @PostMapping
-    BaseResponse<ResponseUser> createUser(@Valid @RequestBody CreateUserRequest request);
+    BaseResponse<ResponseUser> createUser(@Valid @RequestBody RequestUserCreate request);
 
     @GetMapping("/{id}")
     BaseResponse<ResponseUser> getUserById(@PathVariable Long id);
 
     @PutMapping()
     BaseResponse<ResponseUser> updateUser(
-            @Valid @RequestBody UpdateUserRequest request);
+            @Valid @RequestBody RequestUserUpdate request);
 
     @DeleteMapping("/{id}")
     BaseResponse<Long> deleteUser(@PathVariable Long id);

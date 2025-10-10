@@ -1,7 +1,7 @@
 package com.sitamvan.auth.endpoint.impl;
 
-import com.sitamvan.auth.dto.request.CreateUserRequest;
-import com.sitamvan.auth.dto.request.UpdateUserRequest;
+import com.sitamvan.auth.dto.request.RequestUserCreate;
+import com.sitamvan.auth.dto.request.RequestUserUpdate;
 import com.sitamvan.auth.dto.response.ResponseUser;
 import com.sitamvan.auth.endpoint.IUserEndpoint;
 import com.sitamvan.auth.mapper.UserMapper;
@@ -21,7 +21,7 @@ public class UserEndpointImpl implements IUserEndpoint {
     private final UserMapper userMapper;
 
     @Override
-    public BaseResponse<ResponseUser> createUser(CreateUserRequest request) {
+    public BaseResponse<ResponseUser> createUser(RequestUserCreate request) {
         User user = userService.createUser(request);
         return ResponseBuilder.ok(userMapper.toResponse(user), "User created successfully");
     }
@@ -33,7 +33,7 @@ public class UserEndpointImpl implements IUserEndpoint {
     }
 
     @Override
-    public BaseResponse<ResponseUser> updateUser(UpdateUserRequest request) {
+    public BaseResponse<ResponseUser> updateUser(RequestUserUpdate request) {
         User updatedUser = userService.updateUser( request);
         return ResponseBuilder.ok(userMapper.toResponse(updatedUser), "User updated successfully");
     }

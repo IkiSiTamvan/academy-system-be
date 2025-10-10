@@ -1,7 +1,7 @@
 package com.sitamvan.auth.service.impl;
 
-import com.sitamvan.auth.dto.request.CreateUserRequest;
-import com.sitamvan.auth.dto.request.UpdateUserRequest;
+import com.sitamvan.auth.dto.request.RequestUserCreate;
+import com.sitamvan.auth.dto.request.RequestUserUpdate;
 import com.sitamvan.auth.mapper.UserMapper;
 import com.sitamvan.auth.model.User;
 import com.sitamvan.auth.repository.IUserRepository;
@@ -37,8 +37,8 @@ class UserServiceImplTest {
     @Captor
     private ArgumentCaptor<User> userCaptor;
 
-    private CreateUserRequest buildCreateRequest(String username, String email, String password, Boolean isActive) {
-        return CreateUserRequest.builder()
+    private RequestUserCreate buildCreateRequest(String username, String email, String password, Boolean isActive) {
+        return RequestUserCreate.builder()
                 .username(username)
                 .email(email)
                 .password(password)
@@ -46,8 +46,8 @@ class UserServiceImplTest {
                 .build();
     }
 
-    private UpdateUserRequest buildUpdateRequest(Long id, String username, String email, String password, Boolean isActive) {
-        return UpdateUserRequest.builder()
+    private RequestUserUpdate buildUpdateRequest(Long id, String username, String email, String password, Boolean isActive) {
+        return RequestUserUpdate.builder()
                 .id(id)
                 .username(username)
                 .email(email)
@@ -59,7 +59,7 @@ class UserServiceImplTest {
     @Test
     void createUser_shouldEncodePassword_andSave() {
         // arrange
-        CreateUserRequest req = buildCreateRequest("john", "john@mail.com", "secret", true);
+        RequestUserCreate req = buildCreateRequest("john", "john@mail.com", "secret", true);
         User mapped = new User();
         when(userMapper.toEntityFromCreate(req)).thenReturn(mapped);
         when(passwordEncoder.encode("secret")).thenReturn("encoded");
@@ -77,7 +77,7 @@ class UserServiceImplTest {
     @Test
     void createUser_shouldNotEncode_whenPasswordBlank() {
         // arrange
-        CreateUserRequest req = buildCreateRequest("john", "john@mail.com", "  ", true);
+        RequestUserCreate req = buildCreateRequest("john", "john@mail.com", "  ", true);
         User mapped = new User();
         when(userMapper.toEntityFromCreate(req)).thenReturn(mapped);
         when(userRepository.save(mapped)).thenAnswer(inv -> inv.getArgument(0));
@@ -94,7 +94,7 @@ class UserServiceImplTest {
     @Test
     void createUser_shouldMapConstraintViolation_toBadRequest() {
         // arrange
-        CreateUserRequest req = buildCreateRequest("john", "john@mail.com", "secret", true);
+        RequestUserCreate req = buildCreateRequest("john", "john@mail.com", "secret", true);
         User mapped = new User();
         when(userMapper.toEntityFromCreate(req)).thenReturn(mapped);
         DataIntegrityViolationException dive = new DataIntegrityViolationException("duplicate key value violates unique constraint uk_user_email");
@@ -134,7 +134,7 @@ class UserServiceImplTest {
     @Test
     void updateUser_shouldApplyMapper_andEncodePassword_whenProvided() {
         // arrange
-        UpdateUserRequest req = buildUpdateRequest(5L, "newname", "new@mail.com", "newpass", true);
+        RequestUserUpdate req = buildUpdateRequest(5L, "newname", "new@mail.com", "newpass", true);
         User existing = new User();
         existing.setId(5L);
         when(userRepository.findById(5L)).thenReturn(Optional.of(existing));
@@ -154,7 +154,7 @@ class UserServiceImplTest {
     @Test
     void updateUser_shouldNotEncode_whenPasswordNullOrBlank() {
         // arrange
-        UpdateUserRequest req = buildUpdateRequest(7L, null, null, null, null);
+        RequestUserUpdate req = buildUpdateRequest(7L, null, null, null, null);
         User existing = new User();
         existing.setId(7L);
         when(userRepository.findById(7L)).thenReturn(Optional.of(existing));
@@ -171,7 +171,7 @@ class UserServiceImplTest {
     @Test
     void updateUser_shouldThrow_whenNotFound() {
         // arrange
-        UpdateUserRequest req = buildUpdateRequest(404L, null, null, null, null);
+        RequestUserUpdate req = buildUpdateRequest(404L, null, null, null, null);
         when(userRepository.findById(404L)).thenReturn(Optional.empty());
 
         // act + assert
