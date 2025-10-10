@@ -1,11 +1,12 @@
 package com.sitamvan.auth.service;
 
-import com.sitamvan.auth.dto.request.RequestUser;
+import com.sitamvan.auth.dto.request.CreateUserRequest;
+import com.sitamvan.auth.dto.request.UpdateUserRequest;
 import com.sitamvan.auth.model.User;
 
 public interface IUserService {
-    User createUser(RequestUser request);
+    User createUser(CreateUserRequest request);
     User getUserById(Long id);
-    User updateUser(Long id, RequestUser request);
+    User updateUser(UpdateUserRequest request);
     void deleteUser(Long id);
 }

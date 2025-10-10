@@ -1,6 +1,7 @@
 package com.sitamvan.auth.service.impl;
 
-import com.sitamvan.auth.dto.request.RequestUser;
+import com.sitamvan.auth.dto.request.CreateUserRequest;
+import com.sitamvan.auth.dto.request.UpdateUserRequest;
 import com.sitamvan.auth.mapper.UserMapper;
 import com.sitamvan.auth.model.User;
 import com.sitamvan.auth.repository.IUserRepository;
@@ -26,10 +27,10 @@ public class UserServiceImpl implements IUserService {
     private final UserMapper userMapper;
 
     @Override
-    public User createUser(RequestUser request) {
+    public User createUser(CreateUserRequest request) {
         try {
 
-            User user = userMapper.toEntity(request);
+            User user = userMapper.toEntityFromCreate(request);
 
             Optional.ofNullable(request.password())
                     .filter(p -> !p.isBlank())
@@ -49,12 +50,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User updateUser(Long id, RequestUser request) {
+    public User updateUser(UpdateUserRequest request) {
         try {
-            User existingUser = userRepository.findById(id)
-                    .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + id));
+            User existingUser = userRepository.findById(request.id())
+                    .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + request.id()));
 
-            userMapper.updateUserFromDto(request, existingUser);
+            userMapper.toEntityFromUpdate(request, existingUser);
 
             Optional.ofNullable(request.password())
                     .filter(p -> !p.isBlank())
