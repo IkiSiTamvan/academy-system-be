@@ -8,8 +8,6 @@ import com.sitamvan.auth.repository.IUserRepository;
 import com.sitamvan.shared.data.exception.ServiceException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,8 +32,6 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    @Captor
-    private ArgumentCaptor<User> userCaptor;
 
     private RequestUserCreate buildCreateRequest(String username, String email, String password, Boolean isActive) {
         return RequestUserCreate.builder()
@@ -46,9 +42,8 @@ class UserServiceImplTest {
                 .build();
     }
 
-    private RequestUserUpdate buildUpdateRequest(Long id, String username, String email, String password, Boolean isActive) {
+    private RequestUserUpdate buildUpdateRequest(String username, String email, String password, Boolean isActive) {
         return RequestUserUpdate.builder()
-                .id(id)
                 .username(username)
                 .email(email)
                 .password(password)
@@ -134,15 +129,16 @@ class UserServiceImplTest {
     @Test
     void updateUser_shouldApplyMapper_andEncodePassword_whenProvided() {
         // arrange
-        RequestUserUpdate req = buildUpdateRequest(5L, "newname", "new@mail.com", "newpass", true);
+        Long userId = 5L;
+        RequestUserUpdate req = buildUpdateRequest("newname", "new@mail.com", "newpass", true);
         User existing = new User();
-        existing.setId(5L);
-        when(userRepository.findById(5L)).thenReturn(Optional.of(existing));
+        existing.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existing));
         when(passwordEncoder.encode("newpass")).thenReturn("enc");
         when(userRepository.save(existing)).thenReturn(existing);
 
         // act
-        User updated = userService.updateUser(req);
+        User updated = userService.updateUser(userId, req);
 
         // assert
         assertThat(updated).isSameAs(existing);
@@ -154,14 +150,15 @@ class UserServiceImplTest {
     @Test
     void updateUser_shouldNotEncode_whenPasswordNullOrBlank() {
         // arrange
-        RequestUserUpdate req = buildUpdateRequest(7L, null, null, null, null);
+        Long userId = 7L;
+        RequestUserUpdate req = buildUpdateRequest(null, null, null, null);
         User existing = new User();
-        existing.setId(7L);
-        when(userRepository.findById(7L)).thenReturn(Optional.of(existing));
+        existing.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existing));
         when(userRepository.save(existing)).thenReturn(existing);
 
         // act
-        userService.updateUser(req);
+        userService.updateUser(userId, req);
 
         // assert
         verify(passwordEncoder, never()).encode(any());
@@ -171,11 +168,12 @@ class UserServiceImplTest {
     @Test
     void updateUser_shouldThrow_whenNotFound() {
         // arrange
-        RequestUserUpdate req = buildUpdateRequest(404L, null, null, null, null);
-        when(userRepository.findById(404L)).thenReturn(Optional.empty());
+        Long userId = 404L;
+        RequestUserUpdate req = buildUpdateRequest( null, null, null, null);
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // act + assert
-        assertThatThrownBy(() -> userService.updateUser(req))
+        assertThatThrownBy(() -> userService.updateUser(userId, req))
                 .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("User not found with id: 404");
     }

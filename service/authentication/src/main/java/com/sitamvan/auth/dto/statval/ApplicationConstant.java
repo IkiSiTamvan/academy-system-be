@@ -21,8 +21,7 @@ public class ApplicationConstant {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Path {
         public static final String PAGINATION = "/{page}/{size}";
-        public static final String EMPTY = "";
-        public static final String ACTIVE_COUNT = "/active-count";
+        public static final String FIND_BY_ID = "/{id}";
     }
 
 }

@@ -1,7 +1,6 @@
 package com.sitamvan.auth.dto.request;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -10,8 +9,6 @@ import java.io.Serializable;
 
 @Builder
 public record RequestUserUpdate(
-        @NotNull(message = "ID is required")
-        Long id,
 
         @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
         String username,

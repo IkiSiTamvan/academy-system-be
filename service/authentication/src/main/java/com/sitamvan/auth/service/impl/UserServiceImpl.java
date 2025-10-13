@@ -2,14 +2,20 @@ package com.sitamvan.auth.service.impl;
 
 import com.sitamvan.auth.dto.request.RequestUserCreate;
 import com.sitamvan.auth.dto.request.RequestUserUpdate;
+import com.sitamvan.auth.dto.request.UserSearchCriteria;
 import com.sitamvan.auth.mapper.UserMapper;
 import com.sitamvan.auth.model.User;
 import com.sitamvan.auth.repository.IUserRepository;
 import com.sitamvan.auth.service.IUserService;
+import com.sitamvan.auth.specifications.UserSpecifications;
 import com.sitamvan.shared.data.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,10 +56,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User updateUser(RequestUserUpdate request) {
+    public User updateUser(Long id, RequestUserUpdate request) {
         try {
-            User existingUser = userRepository.findById(request.id())
-                    .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + request.id()));
+            User existingUser = userRepository.findById(id)
+                    .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + id));
 
             userMapper.toEntityFromUpdate(request, existingUser);
 
@@ -74,6 +80,22 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + id));
         userRepository.delete(user);
+    }
+
+    @Override
+    public Page<User> getUsers(UserSearchCriteria criteria, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Specification<User> spec = Specification.allOf(
+                UserSpecifications.queryLike(criteria.query()),
+                UserSpecifications.usernameLike(criteria.username()),
+                UserSpecifications.emailLike(criteria.email()),
+                UserSpecifications.enabledEquals(criteria.enabled()),
+                UserSpecifications.idsIn(criteria.ids()),
+                UserSpecifications.roleEquals(criteria.role())
+        );
+
+        return userRepository.findAll(spec, pageable);
     }
 
     private ServiceException mapConstraintToField(DataIntegrityViolationException e) {
