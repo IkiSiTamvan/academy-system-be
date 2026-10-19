@@ -10,3 +10,4 @@ infer-out/
 **/.vscode/
 aws/
 awscliv2.zip
+/hermes_pstk.txt

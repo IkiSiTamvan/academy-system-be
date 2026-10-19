@@ -14,12 +14,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
 @RestController
+@PreAuthorize("hasAuthority('PLATFORM_ADMIN')")
 public class UserEndpointImpl implements IUserEndpoint {
     private final IUserService userService;
     private final UserMapper userMapper;

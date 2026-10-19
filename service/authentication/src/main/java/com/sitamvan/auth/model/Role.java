@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "roles")
 @Getter
@@ -21,9 +18,12 @@ public class Role extends AAuditable {
     private Long id;
 
     @Column(unique = true, nullable = false, length = 50)
+    private String code;
+
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Set<User> users = new HashSet<>();
+    @Column(name = "platform_role", nullable = false)
+    private boolean platformRole;
 }
 

@@ -1,9 +1,8 @@
 package com.sitamvan.auth.specifications;
 
-import com.sitamvan.auth.model.Role;
+import com.sitamvan.auth.model.SchoolMembershipRole;
 import com.sitamvan.auth.model.User;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -47,9 +46,12 @@ public final class UserSpecifications {
         if (roleName == null || roleName.isBlank()) return null;
         final String rn = roleName.trim().toLowerCase();
         return (root, cq, cb) -> {
-            Join<User, Role> roles = root.join("roles", JoinType.LEFT);
-            cq.distinct(true);
-            return cb.equal(cb.lower(roles.get("name")), rn);
+            Subquery<Long> roleMatch = cq.subquery(Long.class);
+            var assignment = roleMatch.from(SchoolMembershipRole.class);
+            roleMatch.select(assignment.get("membership").get("user").get("id"))
+                    .where(cb.equal(assignment.get("membership").get("user").get("id"), root.get("id")),
+                            cb.equal(cb.lower(assignment.get("role").get("code")), rn));
+            return cb.exists(roleMatch);
         };
     }
 }

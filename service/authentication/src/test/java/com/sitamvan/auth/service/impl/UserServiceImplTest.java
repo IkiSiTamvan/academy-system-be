@@ -179,7 +179,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void deleteUser_shouldDelete_whenFound() {
+    void deleteUser_shouldSoftDelete_whenFound() {
         // arrange
         User existing = new User();
         existing.setId(3L);
@@ -189,7 +189,8 @@ class UserServiceImplTest {
         userService.deleteUser(3L);
 
         // assert
-        verify(userRepository).delete(existing);
+        assertThat(existing.getRowStatus()).isEqualTo(com.sitamvan.shared.data.util.RowStatus.DELETED);
+        verify(userRepository).save(existing);
     }
 
     @Test

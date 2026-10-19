@@ -9,7 +9,14 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+    @BeanMapping(builder = @org.mapstruct.Builder(disableBuilder = true))
     @Mapping(target = "enabled", source = "isActive")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedBy", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "rowStatus", ignore = true)
     User toEntityFromCreate(RequestUserCreate dto);
 
     @Mapping(target = "isActive", source = "enabled")
@@ -17,5 +24,11 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "enabled", source = "isActive")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedBy", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "rowStatus", ignore = true)
     void toEntityFromUpdate(RequestUserUpdate dto, @MappingTarget User entity);
 }

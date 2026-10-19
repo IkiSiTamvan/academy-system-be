@@ -6,17 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.ResponseEntity;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServiceException.class)
-    public BaseResponse<?> handleMyCustomException(ServiceException ex) {
-        return ResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    public ResponseEntity<BaseResponse<?>> handleMyCustomException(ServiceException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ResponseBuilder.error(ex.getStatus(), ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public BaseResponse<?> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<BaseResponse<?>> handleValidationException(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -24,12 +25,13 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Invalid input");
 
-        return ResponseBuilder.error(HttpStatus.BAD_REQUEST, errorMessage);
+        return ResponseEntity.badRequest().body(ResponseBuilder.error(HttpStatus.BAD_REQUEST, errorMessage));
     }
 
     @ExceptionHandler(Exception.class)
-    public BaseResponse<?> handleGeneralException(Exception ex) {
-        return ResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"+ ex.getMessage());
+    public ResponseEntity<BaseResponse<?>> handleGeneralException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"));
     }
 }
 

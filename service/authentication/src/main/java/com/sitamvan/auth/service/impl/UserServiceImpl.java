@@ -9,6 +9,7 @@ import com.sitamvan.auth.repository.IUserRepository;
 import com.sitamvan.auth.service.IUserService;
 import com.sitamvan.auth.specifications.UserSpecifications;
 import com.sitamvan.shared.data.exception.ServiceException;
+import com.sitamvan.shared.data.util.RowStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -52,6 +53,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
+                .filter(user -> user.getRowStatus() == RowStatus.ACTIVE)
                 .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + id));
     }
 
@@ -59,6 +61,7 @@ public class UserServiceImpl implements IUserService {
     public User updateUser(Long id, RequestUserUpdate request) {
         try {
             User existingUser = userRepository.findById(id)
+                    .filter(user -> user.getRowStatus() == RowStatus.ACTIVE)
                     .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + id));
 
             userMapper.toEntityFromUpdate(request, existingUser);
@@ -79,7 +82,8 @@ public class UserServiceImpl implements IUserService {
         log.info("Deleting user with id: {}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> ServiceException.notFound(USER_NOT_FOUND_MSG + id));
-        userRepository.delete(user);
+        user.setRowStatus(RowStatus.DELETED);
+        userRepository.save(user);
     }
 
     @Override
@@ -87,6 +91,7 @@ public class UserServiceImpl implements IUserService {
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<User> spec = Specification.allOf(
+                (root, query, cb) -> cb.equal(root.get("rowStatus"), RowStatus.ACTIVE),
                 UserSpecifications.queryLike(criteria.query()),
                 UserSpecifications.usernameLike(criteria.username()),
                 UserSpecifications.emailLike(criteria.email()),
@@ -102,11 +107,11 @@ public class UserServiceImpl implements IUserService {
         String message = e.getMostSpecificCause().getMessage();
 
         if (message.contains("uk_user_username")) {
-            return ServiceException.badRequest("Username already exists");
+            return ServiceException.duplicate("Username already exists");
         } else if (message.contains("uk_user_email")) {
-            return ServiceException.badRequest("Email already exists");
+            return ServiceException.duplicate("Email already exists");
         }
 
-        return ServiceException.badRequest("Data integrity error: " + message);
+        return ServiceException.badRequest("User data violates a database constraint");
     }
 }
