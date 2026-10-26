@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,6 +34,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<?>> handleGeneralException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"));
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<BaseResponse<?>> handleMalformedInput(Exception ex) {
+        return ResponseEntity.badRequest().body(ResponseBuilder.error(HttpStatus.BAD_REQUEST,
+                "Format data tidak valid; periksa tanggal, ID, dan parameter pencarian"));
     }
 }
 

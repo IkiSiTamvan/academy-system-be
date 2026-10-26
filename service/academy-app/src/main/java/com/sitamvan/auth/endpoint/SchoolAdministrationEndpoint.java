@@ -12,12 +12,22 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.sitamvan.auth.security.UserPrincipal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/schools")
 @RequiredArgsConstructor
 public class SchoolAdministrationEndpoint {
     private final SchoolAdministrationService service;
+
+    @GetMapping
+    public BaseResponse<List<ResponseSchool>> listSchools(@AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseBuilder.ok(service.listSchools(principal.userId()).stream()
+                .map(school -> new ResponseSchool(school.getId(), school.getCode(), school.getName(), school.getTimeZone()))
+                .toList(), "Sekolah dimuat");
+    }
 
     @PostMapping
     @PreAuthorize("hasAuthority('PLATFORM_ADMIN')")

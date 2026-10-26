@@ -26,6 +26,8 @@ import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Set;
+import java.util.List;
+import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,18 @@ public class SchoolAdministrationService {
     private final ISchoolMembershipRoleRepository membershipRoleRepository;
     private final ISchoolInvitationRepository invitationRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IUserGlobalRoleRepository globalRoleRepository;
+
+    @Transactional(readOnly = true)
+    public List<School> listSchools(Long userId) {
+        if (globalRoleRepository.findRoleCodesByUserId(userId).contains("PLATFORM_ADMIN")) {
+            return schoolRepository.findByRowStatusOrderByNameAsc(RowStatus.ACTIVE);
+        }
+        return membershipRepository.findActiveMembershipsByUserId(userId).stream()
+                .map(SchoolMembership::getSchool)
+                .sorted(Comparator.comparing(School::getName))
+                .toList();
+    }
 
     @Transactional
     public School createSchool(RequestCreateSchool request) {
@@ -48,7 +62,7 @@ public class SchoolAdministrationService {
         school.setName(request.name().trim());
         school.setAddress(request.address());
         school.setTimeZone(request.timeZone() == null || request.timeZone().isBlank() ? "Asia/Jakarta" : request.timeZone());
-        try { return schoolRepository.save(school); }
+        try { return schoolRepository.saveAndFlush(school); }
         catch (DataIntegrityViolationException ex) { throw ServiceException.duplicate("School code already exists"); }
     }
 

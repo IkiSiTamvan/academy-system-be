@@ -14,16 +14,23 @@ Set `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, and `JWT_SECRET` (at least 32 bytes)
 
 For local development, the application also loads an optional `application-local.yml` from the working directory. This file is Git-ignored and stays outside the packaged JAR. You can keep a generated local JWT secret and local database settings there; do not commit credentials. Run from the repository root so this file is found. `JWT_SECRET` should contain at least 32 bytes and should be randomly generated.
 
-The executable module is `service/academy-app`, started by `com.sitamvan.AcademyApplication`. Auth, academic, and scheduling packages run in the same application. Academic and scheduling data models are present; CRUD workflows and automatic schedule generation are future work.
+The executable module is `service/academy-app`, started by `com.sitamvan.AcademyApplication`. Auth, academic, and scheduling packages run in the same application. Academic-year CRUD is integrated with the Next.js frontend; other masters and schedule generation are future work.
 
 All routes share the `/api` servlet context (default port `8081`):
 
 - Login: `POST http://localhost:8081/api/v1/auth/login`
 - Current user: `GET http://localhost:8081/api/v1/auth/me`
-- Schools: `POST http://localhost:8081/api/v1/schools`
+- Schools: `GET` / `POST http://localhost:8081/api/v1/schools`
+- Academic years: `GET` / `POST http://localhost:8081/api/v1/academic-years`, `GET` / `PUT` / `DELETE` on `/{id}`
 - Swagger UI: `http://localhost:8081/api/swagger-ui/index.html`
 
 Clients previously using `/api/auth` as the base path must switch to `/api`.
+
+## First integrated master
+
+See [academic-year API](docs/academic-years.md). The sibling `schedule-system-fe` provides login, school selection/creation, and academic-year management at `http://localhost:3000`. Next.js forwards bearer tokens and school context on the server.
+
+`mvn verify` requires Java 21 and Docker for PostgreSQL Testcontainers. Its disposable test database is separate from the local Compose database. Coverage includes migrations, HTTP CRUD, tenant isolation, roles, validation, soft deletion, and active-year transitions.
 
 ## Build and run
 

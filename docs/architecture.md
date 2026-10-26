@@ -36,8 +36,9 @@ The solver-independent `ScheduleGenerator` port accepts a school/period/version 
 
 ## Follow-up work
 
-- Add tenant-scoped CRUD/use cases for academic masters and validate that related IDs all belong to the same school and academic period. Current phase adds the data model, not those APIs.
-- Add integration coverage for Flyway against PostgreSQL, role-scoped access, invitation expiry/reuse, and class/teacher/room slot conflicts.
+- Academic-year CRUD and school selection are integrated with the minimal modern Next.js frontend. See `academic-years.md`. V5 adds live-code and single-active-year indexes. Academic periods are the next useful step after user feedback.
+- Continue tenant-scoped CRUD for remaining masters and validate related IDs against school and academic period.
+- PostgreSQL Testcontainers covers migrations, academic-year CRUD, roles, tenant isolation, and school selection. Add coverage for invitation expiry/reuse and class/teacher/room slot conflicts as those flows grow.
 - Review timetable requirement semantics with schools: sessions per week are modeled separately from duration in slots; decide whether exact weekly frequency, minimum/maximum, or preferred frequency is needed.
 - Define qualification matching, teacher availability default behavior, room facility matching, class promotion/reorganization, and whether a session may span breaks.
 - Compare OR-Tools and Timefold against representative school constraints before choosing or implementing a solver. Keep generation behind an interface so it can move to a worker later if CPU or latency requires it.
