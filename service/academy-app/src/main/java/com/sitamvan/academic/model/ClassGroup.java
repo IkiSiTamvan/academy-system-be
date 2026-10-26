@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "class_groups", uniqueConstraints = @UniqueConstraint(name = "uk_class_group_school_year_code", columnNames = {"school_id", "academic_year_id", "code"}))
+@Table(name = "class_groups")
 @Getter @Setter @NoArgsConstructor
 public class ClassGroup extends ASoftDeletable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
