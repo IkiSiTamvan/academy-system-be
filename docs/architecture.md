@@ -36,9 +36,10 @@ The solver-independent `ScheduleGenerator` port accepts a school/period/version 
 
 ## Follow-up work
 
-- Academic-year CRUD and school selection are integrated with the minimal modern Next.js frontend. See `academic-years.md`. V5 adds live-code and single-active-year indexes. Academic periods are the next useful step after user feedback.
-- Continue tenant-scoped CRUD for remaining masters and validate related IDs against school and academic period.
-- PostgreSQL Testcontainers covers migrations, academic-year CRUD, roles, tenant isolation, and school selection. Add coverage for invitation expiry/reuse and class/teacher/room slot conflicts as those flows grow.
+- Nine school-scoped master screens now integrate with the minimal modern Next.js frontend: years, periods, majors, subjects, teachers, classes, facilities, rooms, and time slots. See `academic-years.md` and `academic-masters.md`. V6–V13 add live uniqueness indexes for the new CRUD workflows.
+- Next: teacher qualifications, teacher availability, and class subject requirements, followed by schedule workflows. Related IDs must belong to the same school/year/period as applicable.
+- PostgreSQL Testcontainers covers master CRUD, migrations, roles, tenant isolation, validation, relationship guards, code reuse, time overlap, and school selection. Add invitation expiry/reuse and generator conflict scenarios as those flows grow.
+- Shared UI patterns were extracted after repeated master screens demonstrated reuse: typed configs, server page, controlled form/table, and a server-side action allowlist. Domain validation remains in individual backend services; shared-data stays limited to cross-cutting primitives.
 - Review timetable requirement semantics with schools: sessions per week are modeled separately from duration in slots; decide whether exact weekly frequency, minimum/maximum, or preferred frequency is needed.
 - Define qualification matching, teacher availability default behavior, room facility matching, class promotion/reorganization, and whether a session may span breaks.
 - Compare OR-Tools and Timefold against representative school constraints before choosing or implementing a solver. Keep generation behind an interface so it can move to a worker later if CPU or latency requires it.
