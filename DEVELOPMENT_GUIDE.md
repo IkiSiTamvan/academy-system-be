@@ -501,7 +501,7 @@ Minimal test service perlu mencakup:
 Gunakan pola test yang sudah ada di:
 
 ```text
-service/authentication/src/test/java/com/sitamvan/auth/service/impl/UserServiceImplTest.java
+service/academy-app/src/test/java/com/sitamvan/auth/service/impl/UserServiceImplTest.java
 ```
 
 Untuk unit test service, gunakan Mockito seperti `@Mock` dan `@InjectMocks`. Test endpoint dapat ditambahkan dengan `@WebMvcTest` jika ingin memverifikasi route, validasi request, dan bentuk response JSON.

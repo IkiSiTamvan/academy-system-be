@@ -1,4 +1,4 @@
-package com.sitamvan.auth;
+package com.sitamvan;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,8 +17,8 @@ import java.util.Optional;
 @SpringBootApplication(scanBasePackages = "com.sitamvan")
 @EntityScan("com.sitamvan")
 @EnableJpaRepositories("com.sitamvan")
-@ConfigurationPropertiesScan("com.sitamvan.auth.config")
-public class AuthenticationApplication {
+@ConfigurationPropertiesScan("com.sitamvan")
+public class AcademyApplication {
 
     @org.springframework.context.annotation.Bean
     AuditorAware<Long> auditorAware() {
@@ -32,6 +32,6 @@ public class AuthenticationApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(AuthenticationApplication.class, args);
+        SpringApplication.run(AcademyApplication.class, args);
     }
 }

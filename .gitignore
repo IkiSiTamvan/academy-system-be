@@ -11,3 +11,6 @@ infer-out/
 aws/
 awscliv2.zip
 /hermes_pstk.txt
+.env
+.env.*
+!.env.example

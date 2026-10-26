@@ -23,6 +23,6 @@
     </properties>
 
     <modules>
-        <module>authentication</module>
+        <module>academy-app</module>
     </modules>
 </project>

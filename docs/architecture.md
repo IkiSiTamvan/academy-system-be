@@ -4,7 +4,7 @@ This document is the short handoff and decision record for continuing this repos
 
 ## Product and architecture decisions
 
-- Build one Spring Boot application and PostgreSQL database as a modular monolith. Keep authentication as the current runnable composition root and separate domain code by packages; do not add a Quarkus service or solver worker yet.
+- Build one Spring Boot application and PostgreSQL database as a modular monolith. Use `service/academy-app` as the runnable composition root and separate domain code by packages; do not add a Quarkus service or solver worker yet.
 - Support multiple schools in one database. School-owned records carry a school relationship. Every future tenant-facing service/repository must scope reads and writes to the authenticated membership; a client supplied school ID is context, never proof of access.
 - A user account is global and may belong to several schools. The role catalog is global and fixed across schools. Role assignments are per school membership, so the same account can be `SCHEDULER` at one school and `TEACHER` at another. `PLATFORM_ADMIN` is a global role.
 - Academic years and periods are configured by each school. School masters such as subjects and majors are school-owned and may be copied through a future template workflow.
@@ -16,11 +16,11 @@ This document is the short handoff and decision record for continuing this repos
 
 ## Current implementation shape
 
-- `service/authentication` is still the executable Spring Boot module. `com.sitamvan.academic.model` contains school, academic, room, teacher, and scheduling entities; `com.sitamvan.auth` contains identity and tenant membership.
+- `service/academy-app` is the executable Spring Boot module, started by `com.sitamvan.AcademyApplication`. `com.sitamvan.academic.model` contains school, academic, room, teacher, and scheduling entities; `com.sitamvan.auth` contains identity and tenant membership. Auth is a domain package within the application, not a separately deployed service.
 - `library/shared-data` holds cross-cutting response/error and audit/soft-delete primitives. Do not move domain rules there. Review for a reusable helper after every two commits or at a feature boundary, and only extract a pattern demonstrated in multiple places.
 - Flyway owns schema changes. Hibernate uses `ddl-auto: validate`. The first migrations create the auth baseline, add tenant membership, preserve legacy role links under a `LEGACY` school, and create the academic/scheduling tables.
 - Bootstrap the first platform admin with `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD`, and optionally `BOOTSTRAP_ADMIN_EMAIL`. The seeded role catalog includes `PLATFORM_ADMIN`, `SCHOOL_ADMIN`, `SCHEDULER`, `TEACHER`, and `VIEWER`.
-- Current auth routes are under the existing servlet context `/api/auth`: `POST /v1/auth/login`, `GET /v1/auth/me`, `POST /v1/auth/invitations/accept`, `POST /v1/schools`, and `POST /v1/schools/invitations`. Invitation creation returns a one-time token for out-of-band delivery; no email provider is wired yet.
+- All routes use the shared servlet context `/api`: `POST /api/v1/auth/login`, `GET /api/v1/auth/me`, `POST /api/v1/auth/invitations/accept`, `POST /api/v1/schools`, and `POST /api/v1/schools/invitations`. Clients previously using `/api/auth` as their base path must switch to `/api`. Invitation creation returns a one-time token for out-of-band delivery; no email provider is wired yet.
 - `POST /v1/user` and the other user management routes now require `PLATFORM_ADMIN`. Other routes require a valid bearer token. Tenant roles are loaded from the membership matching `X-School-ID`.
 - `created_by` falls back to system actor ID `0` for seed/bootstrap operations that do not have a logged-in user.
 

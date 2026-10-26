@@ -11,10 +11,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>authentication-service</artifactId>
+    <artifactId>academy-app</artifactId>
     <packaging>jar</packaging>
-    <name>academy-system-authentication-service</name>
-    <description>Authentication Service for Academy System</description>
+    <name>academy-system-app</name>
+    <description>Modular monolith application for Academy System</description>
 
     <dependencies>
         <!-- Shared Data -->
