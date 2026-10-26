@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "academic_periods", uniqueConstraints = @UniqueConstraint(name = "uk_period_year_code", columnNames = {"academic_year_id", "code"}))
+@Table(name = "academic_periods")
 @Getter @Setter @NoArgsConstructor
 public class AcademicPeriod extends ASoftDeletable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
