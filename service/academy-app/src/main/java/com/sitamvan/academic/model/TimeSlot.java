@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "time_slots", uniqueConstraints = @UniqueConstraint(name = "uk_time_slot_year_day_sequence", columnNames = {"academic_year_id", "day_of_week", "sequence_number"}))
+@Table(name = "time_slots")
 @Getter @Setter @NoArgsConstructor
 public class TimeSlot extends ASoftDeletable {
     public enum Kind { LESSON, BREAK, ACTIVITY, OTHER }
