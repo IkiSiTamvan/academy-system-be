@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "teachers", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_teacher_school_code", columnNames = {"school_id", "employee_code"}),
         @UniqueConstraint(name = "uk_teacher_school_user", columnNames = {"school_id", "user_id"})
 })
 @Getter @Setter @NoArgsConstructor
